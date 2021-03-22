@@ -1,0 +1,25 @@
+{
+  "name": "appsyncmasterclass-backend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Backend for AppSync masterclass backend",
+  "main": "index.js",
+  "scripts": {
+    "sls": "sls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phc5/appsyncmasterclass-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phc5/appsyncmasterclass-backend/issues"
+  },
+  "homepage": "https://github.com/phc5/appsyncmasterclass-backend#readme",
+  "devDependencies": {
+    "serverless": "2.4.0",
+    "serverless-appsync-plugin": "^1.8.0"
+  }
+}
