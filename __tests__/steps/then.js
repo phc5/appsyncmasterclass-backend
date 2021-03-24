@@ -18,5 +18,6 @@ const user_exists_in_UsersTable = async (id) => {
 };
 
 module.exports = {
+  
   user_exists_in_UsersTable,
 };

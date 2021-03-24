@@ -3,6 +3,8 @@ const when = require('../../steps/when');
 const then = require('../../steps/then');
 const chance = require('chance').Chance();
 
+const testUtils = require('../../lib/testUtils');
+
 describe('When confirmUserSignup runs', () => {
   it('should save user profile to DynamoDB', async () => {
     const { name, email } = given.a_random_user();
@@ -15,9 +17,7 @@ describe('When confirmUserSignup runs', () => {
     expect(ddbUser).toMatchObject({
       id: username,
       name,
-      createdAt: expect.stringMatching(
-        /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?/g
-      ),
+      createdAt: testUtils.expectCreatedAt,
       followersCount: 0,
       followingCount: 0,
       tweetsCount: 0,

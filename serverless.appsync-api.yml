@@ -5,3 +5,20 @@ userPoolConfig:
   awsRegion: eu-west-1
   defaultAction: ALLOW
   userPoolId: !Ref CognitoUserPool
+
+# tells serverless-appsync-plugin where the appsync templates are
+mappingTemplatesLocation: mapping-templates
+mappingTemplates:
+  - type: Query
+    field: getMyProfile
+    dataSource: usersTable
+    request: Query.getMyProfile.request.vtl
+    response: Query.getMyProfile.response.vtl
+
+dataSources:
+  - type: NONE
+    name: none
+  - type: AMAZON_DYNAMODB
+    name: usersTable
+    config:
+      tableName: !Ref UsersTable
