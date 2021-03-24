@@ -49,7 +49,7 @@ interface IProfile {
   backgroundImageUrl: AWSURL
   bio: String
   location: AWSURL
-  website: AWSDate
+  website: AWSURL
   birthdate: AWSDate
   createdAt: AWSDateTime!
   followersCount: Int!
@@ -67,7 +67,7 @@ type MyProfile implements IProfile {
   backgroundImageUrl: AWSURL
   bio: String
   location: AWSURL
-  website: AWSDate
+  website: AWSURL
   birthdate: AWSDate
   createdAt: AWSDateTime!
   followersCount: Int!
@@ -85,7 +85,7 @@ type OtherProfile implements IProfile {
   backgroundImageUrl: AWSURL
   bio: String
   location: AWSURL
-  website: AWSDate
+  website: AWSURL
   birthdate: AWSDate
   createdAt: AWSDateTime!
   followersCount: Int!
@@ -120,7 +120,7 @@ type Tweet implements ITweet {
   retweeted: Boolean!
 }
 
-type Reply implements ITweet  {
+type Reply implements ITweet {
   id: ID!
   profile: IProfile!
   createdAt: AWSDateTime
@@ -134,7 +134,7 @@ type Reply implements ITweet  {
   inReplyToUser: [IProfile]!
 }
 
-type Retweet implements ITweet  {
+type Retweet implements ITweet {
   id: ID!
   profile: IProfile!
   createdAt: AWSDateTime
@@ -152,5 +152,6 @@ input ProfileInput {
   backgroundImageUrl: AWSURL
   bio: String
   location: AWSURL
+  website: AWSURL
   birthdate: AWSDate
 }

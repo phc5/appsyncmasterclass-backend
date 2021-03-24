@@ -1,17 +1,18 @@
 const given = require('../../steps/given');
 const when = require('../../steps/when');
+const chance = require('chance').Chance();
 
 const testUtils = require('../../lib/testUtils');
 
 describe('Given an authenticated user', () => {
-  let user;
+  let user, profile;
 
   beforeAll(async () => {
     user = await given.an_authenticated_user();
   });
 
   it('should allow user to fetch profile with getMyProfile', async () => {
-    const profile = await when.a_user_calls_getMyProfile(user);
+    profile = await when.a_user_calls_getMyProfile(user);
 
     expect(profile).toMatchObject({
       id: user.username,
@@ -32,5 +33,18 @@ describe('Given an authenticated user', () => {
     const [firstName, lastName] = user.name.split(' ');
     expect(profile.username).toContain(firstName);
     expect(profile.username).toContain(lastName);
+  });
+
+  it('should allow user to edit profile with editMyProfile', async () => {
+    const newName = chance.first();
+    const input = {
+      name: newName,
+    };
+    const newProfile = await when.a_user_calls_editMyProfile(user, input);
+
+    expect(newProfile).toMatchObject({
+      ...profile,
+      name: newName,
+    });
   });
 });
