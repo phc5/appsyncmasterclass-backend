@@ -4,11 +4,9 @@ const _ = require('lodash');
 const throwOnErrors = ({ query, variables, errors }) => {
   if (errors) {
     const errorMessage = `
-      query: ${query.substr(0, 100)}
-
-      variables: ${JSON.stringify(variables, null, 2)}
-
-      error: ${JSON.stringify(errors, null, 2)}
+query: ${query.substr(0, 100)}
+variables: ${JSON.stringify(variables, null, 2)}
+error: ${JSON.stringify(errors, null, 2)}
     `;
     throw new Error(errorMessage);
   }
@@ -16,24 +14,27 @@ const throwOnErrors = ({ query, variables, errors }) => {
 
 module.exports = async (url, query, variables = {}, auth) => {
   const headers = {};
-
   if (auth) {
     headers.Authorization = auth;
   }
 
   try {
-    const response = await http({
-      method: 'POST',
+    const resp = await http({
+      method: 'post',
       url,
       headers,
-      data: { query, variables: JSON.stringify(variables) },
+      data: {
+        query,
+        variables: JSON.stringify(variables),
+      },
     });
-    const { data, errors } = response.data;
+
+    const { data, errors } = resp.data;
     throwOnErrors({ query, variables, errors });
     return data;
-  } catch (error) {
-    console.log(error);
-    const errors = _.get(error, 'response.data.errors');
+  } catch (err) {
+    const errors = _.get(err, 'response.data.errors');
     throwOnErrors({ query, variables, errors });
+    throw err;
   }
 };

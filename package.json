@@ -27,7 +27,7 @@
   "homepage": "https://github.com/phc5/appsyncmasterclass-backend#readme",
   "devDependencies": {
     "@types/jest": "^26.0.21",
-    "amplify-appsync-simulator": "^1.25.5",
+    "amplify-appsync-simulator": "1.23.8",
     "amplify-velocity-template": "^1.4.4",
     "aws-sdk": "^2.869.0",
     "axios": "^0.21.1",

@@ -29,5 +29,24 @@ describe('Given an authenticated user', () => {
         retweetsCount: 0,
       });
     });
+
+    it('should see new tweet when he calls getTweets', async () => {
+      const { tweets, nextToken } = await when.a_user_calls_getTweets(
+        user,
+        user.username,
+        25
+      );
+      expect(nextToken).toBeNull();
+      expect(tweets.length).toEqual(1);
+      expect(tweets[0]).toEqual(tweet);
+    });
+
+    it('should not be able to ask for more than 25 tweets per page', async () => {
+      await expect(
+        when.a_user_calls_getTweets(user, user.username, 26)
+      ).rejects.toMatchObject({
+        message: expect.stringContaining('Max limit is 25'),
+      });
+    });
   });
 });

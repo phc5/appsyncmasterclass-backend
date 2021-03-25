@@ -98,14 +98,62 @@ const a_user_calls_getMyProfile = async (user) => {
   return profile;
 };
 
+const a_user_calls_getTweets = async (user, userId, limit, nextToken) => {
+  const getTweets = `
+    query getTweets($userId: ID!, $limit: Int!, $nextToken: String) {
+      getTweets(userId: $userId, limit: $limit, nextToken: $nextToken) {
+        nextToken
+        tweets {
+          id
+          createdAt
+          profile {
+            id
+            name
+            username
+          }
+
+          ... on Tweet {
+            text
+            repliesCount
+            likesCount
+            retweetsCount
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getTweets,
+    { userId, limit, nextToken },
+    user.accessToken
+  );
+
+  const tweets = data.getTweets;
+
+  console.log(
+    `[${user.username}] - called getTweets with limit [${limit}] and nextToken [${nextToken}]`
+  );
+
+  return tweets;
+};
+
 const a_user_calls_tweet = async (user, text) => {
   const tweet = `
     mutation Tweet($text: String!) {
       tweet(text: $text) {
+        id
+        createdAt
         text
         repliesCount
         likesCount
         retweetsCount
+        profile {
+            id
+            name
+            username
+          }
       }
     }
   `;
@@ -231,6 +279,7 @@ module.exports = {
   a_user_calls_editMyProfile,
   a_user_calls_getImageUploadUrl,
   a_user_calls_getMyProfile,
+  a_user_calls_getTweets,
   a_user_calls_tweet,
   a_user_signs_up,
   we_invoke_an_appsync_template,
