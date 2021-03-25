@@ -1,5 +1,28 @@
-const AWS = require('aws-sdk');
 require('dotenv').config();
+const AWS = require('aws-sdk');
+const http = require('axios');
+const fs = require('fs');
+
+const user_can_upload_image_to_url = async (url, filepath, contentType) => {
+  const data = fs.readFileSync(filepath);
+
+  await http({
+    method: 'PUT',
+    url,
+    headers: {
+      'Content-Type': contentType,
+    },
+    data,
+  });
+  console.log('uplaoded image to', url);
+};
+
+const user_can_download_image_from = async (url) => {
+  const response = await http(url);
+  console.log('downloaded image from', url);
+
+  return response.data;
+};
 
 const user_exists_in_UsersTable = async (id) => {
   const DynamoDB = new AWS.DynamoDB.DocumentClient();
@@ -18,6 +41,7 @@ const user_exists_in_UsersTable = async (id) => {
 };
 
 module.exports = {
-  
+  user_can_upload_image_to_url,
+  user_can_download_image_from,
   user_exists_in_UsersTable,
 };
