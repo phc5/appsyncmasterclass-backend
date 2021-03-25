@@ -5,40 +5,6 @@ const velocityMapper = require('amplify-appsync-simulator/lib/velocity/value-map
 const velocityTemplate = require('amplify-velocity-template');
 const GraphQL = require('../lib/graphql');
 
-const a_user_signs_up = async (password, name, email) => {
-  const cognito = new AWS.CognitoIdentityServiceProvider();
-
-  const userPoolId = process.env.COGNITO_USER_POOL_ID;
-  const clientId = process.env.WEB_COGNITO_USER_POOL_CLIENT_ID;
-
-  const response = await cognito
-    .signUp({
-      ClientId: clientId,
-      Username: email,
-      Password: password,
-      UserAttributes: [{ Name: 'name', Value: name }],
-    })
-    .promise();
-
-  const username = response.UserSub;
-  console.log(`[${email}] - user has signed up ${username}`);
-
-  await cognito
-    .adminConfirmSignUp({
-      UserPoolId: userPoolId,
-      Username: username,
-    })
-    .promise();
-
-  console.log(`[${email}] -confirmed sign up`);
-
-  return {
-    username,
-    name,
-    email,
-  };
-};
-
 const a_user_calls_editMyProfile = async (user, input) => {
   const editMyProfile = `
     mutation editMyProfile($input: ProfileInput!) {
@@ -132,6 +98,66 @@ const a_user_calls_getMyProfile = async (user) => {
   return profile;
 };
 
+const a_user_calls_tweet = async (user, text) => {
+  const tweet = `
+    mutation Tweet($text: String!) {
+      tweet(text: $text) {
+        text
+        repliesCount
+        likesCount
+        retweetsCount
+      }
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    tweet,
+    { text },
+    user.accessToken
+  );
+
+  const newTweet = data.tweet;
+
+  console.log(`[${user.username}] - tweeted`);
+
+  return newTweet;
+};
+
+const a_user_signs_up = async (password, name, email) => {
+  const cognito = new AWS.CognitoIdentityServiceProvider();
+
+  const userPoolId = process.env.COGNITO_USER_POOL_ID;
+  const clientId = process.env.WEB_COGNITO_USER_POOL_CLIENT_ID;
+
+  const response = await cognito
+    .signUp({
+      ClientId: clientId,
+      Username: email,
+      Password: password,
+      UserAttributes: [{ Name: 'name', Value: name }],
+    })
+    .promise();
+
+  const username = response.UserSub;
+  console.log(`[${email}] - user has signed up ${username}`);
+
+  await cognito
+    .adminConfirmSignUp({
+      UserPoolId: userPoolId,
+      Username: username,
+    })
+    .promise();
+
+  console.log(`[${email}] -confirmed sign up`);
+
+  return {
+    username,
+    name,
+    email,
+  };
+};
+
 const we_invoke_an_appsync_template = (templatePath, context) => {
   const template = fs.readFileSync(templatePath, { encoding: 'utf-8' });
   const ast = velocityTemplate.parse(template);
@@ -187,12 +213,28 @@ const we_invoke_getImageUploadUrl = async (
   return await handler(event, context);
 };
 
+const we_invoke_tweet = async (username, text) => {
+  const handler = require('../../functions/tweet').handler;
+
+  const context = {};
+  const event = {
+    identity: { username },
+    arguments: {
+      text,
+    },
+  };
+
+  return await handler(event, context);
+};
+
 module.exports = {
-  a_user_signs_up,
   a_user_calls_editMyProfile,
   a_user_calls_getImageUploadUrl,
   a_user_calls_getMyProfile,
+  a_user_calls_tweet,
+  a_user_signs_up,
   we_invoke_an_appsync_template,
   we_invoke_confirmUserSignUp,
   we_invoke_getImageUploadUrl,
+  we_invoke_tweet,
 };
