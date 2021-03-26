@@ -97,6 +97,46 @@ const a_user_calls_getMyProfile = async (user) => {
 
   return profile;
 };
+const a_user_calls_getMyTimeline = async (user, limit, nextToken) => {
+  const getMyTimeline = `
+    query getMyTimeline($limit: Int!, $nextToken: String) {
+      getMyTimeline(limit: $limit, nextToken: $nextToken) {
+        nextToken
+        tweets {
+          id
+          createdAt
+          profile {
+            id
+            name
+            username
+          }
+
+          ... on Tweet {
+            text
+            repliesCount
+            likesCount
+            retweetsCount
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getMyTimeline,
+    { limit, nextToken },
+    user.accessToken
+  );
+
+  const result = data.getMyTimeline;
+
+  console.log(
+    `[${user.username}] - fetched timeline with limit [${limit}] and nextToken [${nextToken}]`
+  );
+
+  return result;
+};
 
 const a_user_calls_getTweets = async (user, userId, limit, nextToken) => {
   const getTweets = `
@@ -279,6 +319,7 @@ module.exports = {
   a_user_calls_editMyProfile,
   a_user_calls_getImageUploadUrl,
   a_user_calls_getMyProfile,
+  a_user_calls_getMyTimeline,
   a_user_calls_getTweets,
   a_user_calls_tweet,
   a_user_signs_up,

@@ -24,6 +24,11 @@ mappingTemplates:
     dataSource: tweetsTable
     request: Query.getTweets.request.vtl
     response: Query.getTweets.response.vtl
+  - type: Query
+    field: getMyTimeline
+    dataSource: timelinesTable
+    request: Query.getMyTimeline.request.vtl
+    response: Query.getMyTimeline.response.vtl
 
   - type: Mutation
     field: editMyProfile
@@ -36,9 +41,13 @@ mappingTemplates:
     request: false
     response: false
 
+  # nested resolvers
   - type: Tweet
     field: profile
     dataSource: usersTable
+  - type: TimelinePage
+    field: tweets
+    dataSource: tweetsTable
 
 dataSources:
   - type: NONE
@@ -51,6 +60,10 @@ dataSources:
     name: tweetsTable
     config:
       tableName: !Ref TweetsTable
+  - type: AMAZON_DYNAMODB
+    name: timelinesTable
+    config:
+      tableName: !Ref TimelinesTable
   - type: AWS_LAMBDA
     name: getImageUploadUrlFunction
     config:
@@ -59,3 +72,6 @@ dataSources:
     name: tweetFunction
     config:
       functionName: tweetFunction
+
+substitutions:
+  TweetsTable: !Ref TweetsTable
