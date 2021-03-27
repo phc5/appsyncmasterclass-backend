@@ -80,5 +80,28 @@ describe('Given an authenticated user', () => {
         });
       });
     });
+
+    describe('when user likes a tweet', () => {
+      beforeAll(async () => {
+        await when.a_user_calls_like(user, tweet.id);
+      });
+
+      it('should set Tweet.liked as true', async () => {
+        const { tweets } = await when.a_user_calls_getMyTimeline(user, 25);
+        console.log(tweet.id);
+        console.log(tweets);
+        expect(tweets).toHaveLength(1);
+        expect(tweets[0].id).toEqual(tweet.id);
+        expect(tweets[0].liked).toEqual(true);
+      });
+
+      it('should fail if user likes an already liked tweet', async () => {
+        await expect(() =>
+          when.a_user_calls_like(user, tweet.id)
+        ).rejects.toMatchObject({
+          message: expect.stringContaining('DynamoDB transaction error'),
+        });
+      });
+    });
   });
 });

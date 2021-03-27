@@ -150,6 +150,7 @@ const a_user_calls_getMyProfile = async (user) => {
 
   return profile;
 };
+
 const a_user_calls_getMyTimeline = async (user, limit, nextToken) => {
   const getMyTimeline = `
     query getMyTimeline($limit: Int!, $nextToken: String) {
@@ -204,6 +205,27 @@ const a_user_calls_getTweets = async (user, userId, limit, nextToken) => {
   );
 
   return tweets;
+};
+
+const a_user_calls_like = async (user, tweetId) => {
+  const like = `
+    mutation like($tweetId: ID!) {
+      like(tweetId: $tweetId)
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    like,
+    { tweetId },
+    user.accessToken
+  );
+
+  const response = data.like;
+
+  console.log(`[${user.username}] - has liked tweet [${tweetId}]`);
+
+  return response;
 };
 
 const a_user_calls_tweet = async (user, text) => {
@@ -347,6 +369,7 @@ module.exports = {
   a_user_calls_getMyProfile,
   a_user_calls_getMyTimeline,
   a_user_calls_getTweets,
+  a_user_calls_like,
   a_user_calls_tweet,
   a_user_signs_up,
   we_invoke_an_appsync_template,

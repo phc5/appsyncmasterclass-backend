@@ -1,8 +1,8 @@
 {
-    "version" : "2018-05-29",
-    "operation" : "GetItem",
-    "key" : {
-      "user" : $util.dynamodb.toDynamoDBJson($context.identity.username),
-      "tweetId": $util.dynamodb.toDynamoDBJson($context.source.id)
-    }
+  "version" : "2018-05-29",
+  "operation" : "GetItem",
+  "key" : {
+    "userId" : $util.dynamodb.toDynamoDBJson($context.identity.username),
+    "tweetId" : $util.dynamodb.toDynamoDBJson($context.source.id)
+  }
 }
