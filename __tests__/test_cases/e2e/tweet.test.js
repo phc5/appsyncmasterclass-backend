@@ -27,6 +27,7 @@ describe('Given an authenticated user', () => {
         repliesCount: 0,
         likesCount: 0,
         retweetsCount: 0,
+        liked: false,
       });
     });
 
