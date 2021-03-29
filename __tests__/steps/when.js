@@ -228,6 +228,27 @@ const a_user_calls_like = async (user, tweetId) => {
   return response;
 };
 
+const a_user_calls_unlike = async (user, tweetId) => {
+  const unlike = `
+    mutation unlike($tweetId: ID!) {
+      unlike(tweetId: $tweetId)
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    unlike,
+    { tweetId },
+    user.accessToken
+  );
+
+  const response = data.unlike;
+
+  console.log(`[${user.username}] - has unlike tweet [${tweetId}]`);
+
+  return response;
+};
+
 const a_user_calls_tweet = async (user, text) => {
   const tweet = `
     mutation Tweet($text: String!) {
@@ -370,6 +391,7 @@ module.exports = {
   a_user_calls_getMyTimeline,
   a_user_calls_getTweets,
   a_user_calls_like,
+  a_user_calls_unlike,
   a_user_calls_tweet,
   a_user_signs_up,
   we_invoke_an_appsync_template,

@@ -45,6 +45,11 @@ mappingTemplates:
     dataSource: likesMutation
     request: Mutation.like.request.vtl
     response: Mutation.like.response.vtl
+  - type: Mutation
+    field: unlike
+    dataSource: unlikeMutation
+    request: Mutation.unlike.request.vtl
+    response: Mutation.unlike.response.vtl
 
   # nested resolvers
   - type: Tweet
@@ -83,6 +88,19 @@ dataSources:
       iamRoleStatements:
         - Effect: Allow
           Action: dynamodb:PutItem
+          Resource: !GetAtt LikesTable.Arn
+        - Effect: Allow
+          Action: dynamodb:UpdateItem
+          Resource:
+            - !GetAtt UsersTable.Arn
+            - !GetAtt TweetsTable.Arn
+  - type: AMAZON_DYNAMODB
+    name: unlikeMutation
+    config:
+      tableName: !Ref LikesTable
+      iamRoleStatements:
+        - Effect: Allow
+          Action: dynamodb:DeleteItem
           Resource: !GetAtt LikesTable.Arn
         - Effect: Allow
           Action: dynamodb:UpdateItem
