@@ -128,6 +128,34 @@ const a_user_calls_getImageUploadUrl = async (user, extension, contentType) => {
   return imageUploadUrl;
 };
 
+const a_user_calls_getLikes = async (user, userId, limit, nextToken) => {
+  const getLikes = `
+    query getLikes($userId: ID!, $limit: Int!, $nextToken: String) {
+      getLikes(userId: $userId, limit: $limit, nextToken: $nextToken) {
+        nextToken
+        tweets {
+          ... iTweetFields
+        }
+      }
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getLikes,
+    { userId, limit, nextToken },
+    user.accessToken
+  );
+
+  const response = data.getLikes;
+
+  console.log(
+    `[${user.username}] - called getLikes with limit [${limit}] and nextToken [${nextToken}]`
+  );
+
+  return response;
+};
+
 const a_user_calls_getMyProfile = async (user) => {
   const getMyProfile = `
     query MyQuery {
@@ -253,16 +281,7 @@ const a_user_calls_tweet = async (user, text) => {
   const tweet = `
     mutation Tweet($text: String!) {
       tweet(text: $text) {
-        id
-        createdAt
-        text
-        repliesCount
-        likesCount
-        retweetsCount
-        liked
-        profile {
-          ... iProfileFields
-        }
+        ... tweetFields
       }
     }
   `;
@@ -387,6 +406,7 @@ const we_invoke_tweet = async (username, text) => {
 module.exports = {
   a_user_calls_editMyProfile,
   a_user_calls_getImageUploadUrl,
+  a_user_calls_getLikes,
   a_user_calls_getMyProfile,
   a_user_calls_getMyTimeline,
   a_user_calls_getTweets,
