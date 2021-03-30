@@ -89,6 +89,13 @@ const a_user_calls_editMyProfile = async (user, input) => {
     mutation editMyProfile($input: ProfileInput!) {
       editMyProfile(newProfile: $input) {
         ...myProfileFields
+
+        tweets {
+          nextToken
+          tweets {
+            ... iTweetFields
+          }
+        }
       }
     }
   `;
@@ -161,6 +168,13 @@ const a_user_calls_getMyProfile = async (user) => {
     query MyQuery {
       getMyProfile {
         ...myProfileFields
+
+        tweets {
+          nextToken
+          tweets {
+            ... iTweetFields
+          }
+        }
       }
     }
   `;
