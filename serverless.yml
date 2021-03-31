@@ -1,4 +1,4 @@
-service: appsyncmasterclass-backend
+service: twitter-backend
 frameworkVersion: '2'
 
 plugins:
