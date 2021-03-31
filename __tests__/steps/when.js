@@ -312,6 +312,27 @@ const a_user_calls_retweet = async (user, tweetId) => {
   return response;
 };
 
+const a_user_calls_unretweet = async (user, tweetId) => {
+  const unretweet = `
+    mutation unretweet($tweetId: ID!) {
+      unretweet(tweetId: $tweetId)
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    unretweet,
+    { tweetId },
+    user.accessToken
+  );
+
+  const response = data.unretweet;
+
+  console.log(`[${user.username}] - has unretweeted tweet [${tweetId}]`);
+
+  return response;
+};
+
 const a_user_calls_unlike = async (user, tweetId) => {
   const unlike = `
     mutation unlike($tweetId: ID!) {
@@ -473,6 +494,20 @@ const we_invoke_tweet = async (username, text) => {
   return await handler(event, context);
 };
 
+const we_invoke_unretweet = async (username, tweetId) => {
+  const handler = require('../../functions/unretweet').handler;
+
+  const context = {};
+  const event = {
+    identity: { username },
+    arguments: {
+      tweetId,
+    },
+  };
+
+  return await handler(event, context);
+};
+
 module.exports = {
   a_user_calls_editMyProfile,
   a_user_calls_getImageUploadUrl,
@@ -483,6 +518,7 @@ module.exports = {
   a_user_calls_like,
   a_user_calls_retweet,
   a_user_calls_unlike,
+  a_user_calls_unretweet,
   a_user_calls_tweet,
   a_user_signs_up,
   we_invoke_an_appsync_template,
@@ -490,4 +526,5 @@ module.exports = {
   we_invoke_getImageUploadUrl,
   we_invoke_retweet,
   we_invoke_tweet,
+  we_invoke_unretweet,
 };

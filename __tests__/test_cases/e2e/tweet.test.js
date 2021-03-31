@@ -208,6 +208,27 @@ describe('Given an authenticated user', () => {
           },
         });
       });
+
+      describe('when user unretweets the tweet', () => {
+        beforeAll(async () => {
+          await when.a_user_calls_unretweet(userA, tweet.id);
+        });
+
+        it('should not see retweet when user calls getTweets', async () => {
+          const { tweets } = await when.a_user_calls_getMyTimeline(userA, 25);
+
+          expect(tweets).toHaveLength(1);
+          expect(tweets[0]).toMatchObject({
+            ...tweet,
+            retweetsCount: 0,
+            retweeted: false,
+            profile: {
+              id: userA.username,
+              tweetsCount: 1,
+            },
+          });
+        });
+      });
     });
 
     describe('when another user sends a tweet', () => {
@@ -231,11 +252,11 @@ describe('Given an authenticated user', () => {
             25
           );
 
-          expect(tweets).toHaveLength(3);
+          expect(tweets).toHaveLength(2);
           expect(tweets[0]).toMatchObject({
             profile: {
               id: userA.username,
-              tweetsCount: 3,
+              tweetsCount: 2,
             },
             retweetOf: {
               ...anotherTweet,
@@ -252,13 +273,47 @@ describe('Given an authenticated user', () => {
           expect(tweets[0]).toMatchObject({
             profile: {
               id: userA.username,
-              tweetsCount: 3,
+              tweetsCount: 2,
             },
             retweetOf: {
               ...anotherTweet,
               retweetsCount: 1,
               retweeted: true,
             },
+          });
+        });
+
+        describe('when userA unrewteets userB tweet', () => {
+          beforeAll(async () => {
+            await when.a_user_calls_unretweet(userA, anotherTweet.id);
+          });
+
+          it('userA should not see the retweet when userA calls getTweets', async () => {
+            const { tweets } = await when.a_user_calls_getMyTimeline(userA, 25);
+
+            expect(tweets).toHaveLength(1);
+            expect(tweets[0]).toMatchObject({
+              ...tweet,
+              retweetsCount: 0,
+              retweeted: false,
+              profile: {
+                id: userA.username,
+                tweetsCount: 1,
+              },
+            });
+          });
+
+          it('userA should not see retweet when userA calls getMyTimeline', async () => {
+            const { tweets } = await when.a_user_calls_getMyTimeline(userA, 25);
+
+            expect(tweets).toHaveLength(1);
+            expect(tweets[0]).toMatchObject({
+              ...tweet,
+              profile: {
+                id: userA.username,
+                tweetsCount: 1,
+              },
+            });
           });
         });
       });

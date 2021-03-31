@@ -4,6 +4,45 @@ const http = require('axios');
 const fs = require('fs');
 const _ = require('lodash');
 
+const retweet_does_not_exists_in_RetweetsTable = async (userId, tweetId) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+  const { RETWEETS_TABLE } = process.env;
+
+  console.log(
+    `Looking for retweet of [${tweetId}] for user [${userId}] in table [${RETWEETS_TABLE}]`
+  );
+  const response = await DynamoDB.get({
+    TableName: RETWEETS_TABLE,
+    Key: {
+      userId,
+      tweetId,
+    },
+  }).promise();
+
+  expect(response.Item).not.toBeTruthy();
+  return response.Item;
+};
+
+const retweet_does_not_exists_in_TweetsTable = async (userId, tweetId) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+  const { TWEETS_TABLE } = process.env;
+
+  console.log(`Looking for retweet of[${tweetId}] in table [${TWEETS_TABLE}]`);
+  const response = await DynamoDB.query({
+    TableName: TWEETS_TABLE,
+    IndexName: 'retweetsByCreator',
+    KeyConditionExpression: 'creator = :creator AND retweetOf = :tweetId',
+    ExpressionAttributeValues: {
+      ':creator': userId,
+      ':tweetId': tweetId,
+    },
+    Limit: 1,
+  }).promise();
+
+  expect(response.Items).toHaveLength(0);
+  return null;
+};
+
 const retweet_exists_in_RetweetsTable = async (userId, tweetId) => {
   const DynamoDB = new AWS.DynamoDB.DocumentClient();
   const { RETWEETS_TABLE } = process.env;
@@ -156,6 +195,8 @@ const user_exists_in_UsersTable = async (id) => {
 };
 
 module.exports = {
+  retweet_does_not_exists_in_TweetsTable,
+  retweet_does_not_exists_in_RetweetsTable,
   retweet_exists_in_RetweetsTable,
   retweet_exists_in_TweetsTable,
   there_are_N_tweets_in_TimelinesTable,

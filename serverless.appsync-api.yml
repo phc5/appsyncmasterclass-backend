@@ -60,6 +60,11 @@ mappingTemplates:
     dataSource: retweetFunction
     request: false
     response: false
+  - type: Mutation
+    field: unretweet
+    dataSource: unretweetFunction
+    request: false
+    response: false
 
   # nested resolvers
   - type: Tweet
@@ -152,6 +157,10 @@ dataSources:
     name: retweetFunction
     config:
       functionName: retweetFunction
+  - type: AWS_LAMBDA
+    name: unretweetFunction
+    config:
+      functionName: unretweetFunction
 
 substitutions:
   TweetsTable: !Ref TweetsTable
