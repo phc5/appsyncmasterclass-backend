@@ -153,5 +153,61 @@ describe('Given an authenticated user', () => {
         expect(tweets).toHaveLength(0);
       });
     });
+
+    describe('when a user retweets a tweet', () => {
+      beforeAll(async () => {
+        await when.a_user_calls_retweet(user, tweet.id);
+      });
+
+      it('should see retweet when user calls getTweets', async () => {
+        const { tweets } = await when.a_user_calls_getTweets(
+          user,
+          user.username,
+          25
+        );
+
+        expect(tweets).toHaveLength(2);
+        expect(tweets[0]).toMatchObject({
+          profile: {
+            id: user.username,
+            tweetsCount: 2,
+          },
+          retweetOf: {
+            ...tweet,
+            retweetsCount: 1,
+            retweeted: true,
+            profile: {
+              id: user.username,
+              tweetsCount: 2,
+            },
+          },
+        });
+
+        expect(tweets[1]).toMatchObject({
+          ...tweet,
+          retweetsCount: 1,
+          retweeted: true,
+          profile: {
+            id: user.username,
+            tweetsCount: 2,
+          },
+        });
+      });
+
+      it('should not see retweet when user calls getMyTimeline', async () => {
+        const { tweets } = await when.a_user_calls_getMyTimeline(user, 25);
+
+        expect(tweets).toHaveLength(1);
+        expect(tweets[0]).toMatchObject({
+          ...tweet,
+          retweetsCount: 1,
+          retweeted: true,
+          profile: {
+            id: user.username,
+            tweetsCount: 2,
+          },
+        });
+      });
+    });
   });
 });

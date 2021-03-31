@@ -1,8 +1,8 @@
 {
-  "name": "appsyncmasterclass-backend",
+  "name": "twitter-backend",
   "private": true,
   "version": "1.0.0",
-  "description": "Backend for AppSync masterclass backend",
+  "description": "Backend for twitter clone",
   "main": "index.js",
   "scripts": {
     "deploy": "npm run sls -- deploy",
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phc5/appsyncmasterclass-backend.git"
+    "url": "git+https://github.com/phc5/twitter-backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/phc5/appsyncmasterclass-backend/issues"
+    "url": "https://github.com/phc5/twitter-backend/issues"
   },
-  "homepage": "https://github.com/phc5/appsyncmasterclass-backend#readme",
+  "homepage": "https://github.com/phc5/twitter-backend#readme",
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "amplify-appsync-simulator": "^1.23.8",

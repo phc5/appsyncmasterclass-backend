@@ -1,2 +1,3 @@
-# appsyncmasterclass-backend
-Backend for AppSync masterclass backend
+# twitter-backend
+
+Backend for twitter clone

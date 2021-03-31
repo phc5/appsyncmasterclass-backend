@@ -2,6 +2,68 @@ require('dotenv').config();
 const AWS = require('aws-sdk');
 const http = require('axios');
 const fs = require('fs');
+const _ = require('lodash');
+
+const retweet_exists_in_RetweetsTable = async (userId, tweetId) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+  const { RETWEETS_TABLE } = process.env;
+
+  console.log(
+    `Looking for retweet of [${tweetId}] for user [${userId}] in table [${RETWEETS_TABLE}]`
+  );
+  const response = await DynamoDB.get({
+    TableName: RETWEETS_TABLE,
+    Key: {
+      userId,
+      tweetId,
+    },
+  }).promise();
+
+  expect(response.Item).toBeTruthy();
+  return response.Item;
+};
+
+const retweet_exists_in_TweetsTable = async (userId, tweetId) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+  const { TWEETS_TABLE } = process.env;
+
+  console.log(`Looking for retweet of[${tweetId}] in table [${TWEETS_TABLE}]`);
+  const response = await DynamoDB.query({
+    TableName: TWEETS_TABLE,
+    IndexName: 'retweetsByCreator',
+    KeyConditionExpression: 'creator = :creator AND retweetOf = :tweetId',
+    ExpressionAttributeValues: {
+      ':creator': userId,
+      ':tweetId': tweetId,
+    },
+    Limit: 1,
+  }).promise();
+
+  const retweet = _.get(response, 'Items[0]');
+
+  expect(retweet).toBeTruthy();
+  return retweet;
+};
+
+const there_are_N_tweets_in_TimelinesTable = async (userId, n) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+  const { TIMELINES_TABLE } = process.env;
+
+  console.log(
+    `Looking for [${n}] tweets for user [${userId}] in table [${TIMELINES_TABLE}]`
+  );
+  const response = await DynamoDB.query({
+    TableName: TIMELINES_TABLE,
+    KeyConditionExpression: 'userId = :userId',
+    ExpressionAttributeValues: {
+      ':userId': userId,
+    },
+    ScanIndexForward: false,
+  }).promise();
+
+  expect(response.Items).toHaveLength(n);
+  return response.Items;
+};
 
 const tweet_exists_in_TimelinesTable = async (userId, tweetId) => {
   const DynamoDB = new AWS.DynamoDB.DocumentClient();
@@ -94,6 +156,9 @@ const user_exists_in_UsersTable = async (id) => {
 };
 
 module.exports = {
+  retweet_exists_in_RetweetsTable,
+  retweet_exists_in_TweetsTable,
+  there_are_N_tweets_in_TimelinesTable,
   tweet_exists_in_TimelinesTable,
   tweet_exists_in_TweetsTable,
   tweetsCount_is_updated_in_UsersTable,

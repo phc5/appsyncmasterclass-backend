@@ -55,6 +55,11 @@ mappingTemplates:
     dataSource: unlikeMutation
     request: Mutation.unlike.request.vtl
     response: Mutation.unlike.response.vtl
+  - type: Mutation
+    field: retweet
+    dataSource: retweetFunction
+    request: false
+    response: false
 
   # nested resolvers
   - type: Tweet
@@ -63,6 +68,9 @@ mappingTemplates:
   - type: Tweet
     field: liked
     dataSource: likesTable
+  - type: Tweet
+    field: retweeted
+    dataSource: retweetsTable
   - type: UnhydratedTweetsPage
     field: tweets
     dataSource: tweetsTable
@@ -74,6 +82,14 @@ mappingTemplates:
     dataSource: tweetsTable
     request: MyProfile.tweets.response.vtl
     response: MyProfile.tweets.request.vtl
+  - type: Retweet
+    field: profile
+    dataSource: usersTable
+    request: Tweet.profile.request.vtl
+    response: Tweet.profile.response.vtl
+  - type: Retweet
+    field: retweetOf
+    dataSource: tweetsTable
 
 dataSources:
   - type: NONE
@@ -94,6 +110,10 @@ dataSources:
     name: likesTable
     config:
       tableName: !Ref LikesTable
+  - type: AMAZON_DYNAMODB
+    name: retweetsTable
+    config:
+      tableName: !Ref RetweetsTable
   - type: AMAZON_DYNAMODB
     name: likesMutation
     config:
@@ -128,6 +148,10 @@ dataSources:
     name: tweetFunction
     config:
       functionName: tweetFunction
+  - type: AWS_LAMBDA
+    name: retweetFunction
+    config:
+      functionName: retweetFunction
 
 substitutions:
   TweetsTable: !Ref TweetsTable

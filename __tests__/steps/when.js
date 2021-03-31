@@ -67,6 +67,22 @@ const tweetFragment = `
     likesCount
     retweetsCount
     liked
+    retweeted
+  }
+`;
+
+const retweetFragment = `
+  fragment retweetFields on Retweet {
+    id
+    profile {
+      ... iProfileFields
+    }
+    createdAt
+    retweetOf {
+      ... on Tweet {
+        ... tweetFields
+      }
+    }
   }
 `;
 
@@ -75,6 +91,10 @@ const iTweetFragment = `
     ... on Tweet {
       ... tweetFields
     }
+
+    ... on Retweet {
+      ... retweetFields
+    }
   }
 `;
 
@@ -82,6 +102,7 @@ registerFragment('myProfileFields', myProfileFragment);
 registerFragment('otherProfileFields', otherProfileFragment);
 registerFragment('iProfileFields', iProfileFragment);
 registerFragment('tweetFields', tweetFragment);
+registerFragment('retweetFields', retweetFragment);
 registerFragment('iTweetFields', iTweetFragment);
 
 const a_user_calls_editMyProfile = async (user, input) => {
@@ -270,6 +291,27 @@ const a_user_calls_like = async (user, tweetId) => {
   return response;
 };
 
+const a_user_calls_retweet = async (user, tweetId) => {
+  const retweet = `
+    mutation retweet($tweetId: ID!) {
+      retweet(tweetId: $tweetId)
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    retweet,
+    { tweetId },
+    user.accessToken
+  );
+
+  const response = data.retweet;
+
+  console.log(`[${user.username}] - has retweeted tweet [${tweetId}]`);
+
+  return response;
+};
+
 const a_user_calls_unlike = async (user, tweetId) => {
   const unlike = `
     mutation unlike($tweetId: ID!) {
@@ -403,6 +445,20 @@ const we_invoke_getImageUploadUrl = async (
   return await handler(event, context);
 };
 
+const we_invoke_retweet = async (username, tweetId) => {
+  const handler = require('../../functions/retweet').handler;
+
+  const context = {};
+  const event = {
+    identity: { username },
+    arguments: {
+      tweetId,
+    },
+  };
+
+  return await handler(event, context);
+};
+
 const we_invoke_tweet = async (username, text) => {
   const handler = require('../../functions/tweet').handler;
 
@@ -425,11 +481,13 @@ module.exports = {
   a_user_calls_getMyTimeline,
   a_user_calls_getTweets,
   a_user_calls_like,
+  a_user_calls_retweet,
   a_user_calls_unlike,
   a_user_calls_tweet,
   a_user_signs_up,
   we_invoke_an_appsync_template,
   we_invoke_confirmUserSignUp,
   we_invoke_getImageUploadUrl,
+  we_invoke_retweet,
   we_invoke_tweet,
 };
