@@ -466,6 +466,21 @@ const we_invoke_getImageUploadUrl = async (
   return await handler(event, context);
 };
 
+const we_invoke_reply = async (username, tweetId, text) => {
+  const handler = require('../../functions/reply').handler;
+
+  const context = {};
+  const event = {
+    identity: { username },
+    arguments: {
+      tweetId,
+      text,
+    },
+  };
+
+  return await handler(event, context);
+};
+
 const we_invoke_retweet = async (username, tweetId) => {
   const handler = require('../../functions/retweet').handler;
 
@@ -524,6 +539,7 @@ module.exports = {
   we_invoke_an_appsync_template,
   we_invoke_confirmUserSignUp,
   we_invoke_getImageUploadUrl,
+  we_invoke_reply,
   we_invoke_retweet,
   we_invoke_tweet,
   we_invoke_unretweet,

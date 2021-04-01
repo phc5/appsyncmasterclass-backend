@@ -91,6 +91,27 @@ functions:
           - !GetAtt TimelinesTable.Arn
           - !GetAtt RetweetsTable.Arn
 
+  replyFunction:
+    handler: functions/reply.handler
+    environment:
+      USERS_TABLE: !Ref UsersTable
+      TWEETS_TABLE: !Ref TweetsTable
+      TIMELINES_TABLE: !Ref TimelinesTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:GetItem
+        Resource: !GetAtt TweetsTable.Arn
+      - Effect: Allow
+        Action: dynamodb:UpdateItem
+        Resource:
+          - !GetAtt UsersTable.Arn
+          - !GetAtt TweetsTable.Arn
+      - Effect: Allow
+        Action: dynamodb:PutItem
+        Resource:
+          - !GetAtt TweetsTable.Arn
+          - !GetAtt TimelinesTable.Arn
+
   unretweetFunction:
     handler: functions/unretweet.handler
     environment:
@@ -149,6 +170,8 @@ resources:
           AttributeType: S
         - AttributeName: retweetOf
           AttributeType: S
+        - AttributeName: inReplyToTweet
+          AttributeType: S
       GlobalSecondaryIndexes:
         - IndexName: byCreator
           KeySchema:
@@ -163,6 +186,14 @@ resources:
             - AttributeName: creator
               KeyType: HASH
             - AttributeName: retweetOf
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: repliesForTweet
+          KeySchema:
+            - AttributeName: inReplyToTweet
+              KeyType: HASH
+            - AttributeName: id
               KeyType: RANGE
           Projection:
             ProjectionType: ALL

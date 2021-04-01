@@ -4,6 +4,31 @@ const http = require('axios');
 const fs = require('fs');
 const _ = require('lodash');
 
+const reply_exists_in_TweetsTable = async (userId, tweetId) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+  const { TWEETS_TABLE } = process.env;
+
+  console.log(
+    `Looking for reply by [${userId}] to [${tweetId}] in table [${TWEETS_TABLE}]`
+  );
+
+  const response = await DynamoDB.query({
+    TableName: TWEETS_TABLE,
+    IndexName: 'repliesForTweet',
+    KeyConditionExpression: 'inReplyToTweet = :tweetId',
+    ExpressionAttributeValues: {
+      ':userId': userId,
+      ':tweetId': tweetId,
+    },
+    FilterExpression: 'creator = :userId',
+  }).promise();
+
+  const reply = _.get(response, 'Items.0');
+
+  expect(reply).toBeTruthy();
+  return reply;
+};
+
 const retweet_does_not_exists_in_RetweetsTable = async (userId, tweetId) => {
   const DynamoDB = new AWS.DynamoDB.DocumentClient();
   const { RETWEETS_TABLE } = process.env;
@@ -195,6 +220,7 @@ const user_exists_in_UsersTable = async (id) => {
 };
 
 module.exports = {
+  reply_exists_in_TweetsTable,
   retweet_does_not_exists_in_TweetsTable,
   retweet_does_not_exists_in_RetweetsTable,
   retweet_exists_in_RetweetsTable,
