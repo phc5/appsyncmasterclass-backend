@@ -1,11 +1,7 @@
 require('dotenv').config();
-const path = require('path');
 const given = require('../../steps/given');
 const when = require('../../steps/when');
-const then = require('../../steps/then');
 const chance = require('chance').Chance();
-
-const testUtils = require('../../lib/testUtils');
 
 describe('Given an authenticated user', () => {
   let userA;

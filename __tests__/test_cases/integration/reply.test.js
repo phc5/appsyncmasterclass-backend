@@ -105,7 +105,6 @@ describe('Given two authenticated users', () => {
       describe("when userA replies to userB's retweet", () => {
         const replyText = chance.string({ length: 16 });
         beforeAll(async () => {
-          console.log(userBsRetweet);
           await when.we_invoke_reply(
             userA.username,
             userBsRetweet.id,
