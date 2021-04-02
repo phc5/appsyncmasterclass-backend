@@ -3,7 +3,7 @@
 #end
 
 #set ($users = [])
-#if ($context.info.selectionSetList.size() == 1 && $context.info.selectionSetList[0] == 'id')
+#if ($context.info.selectionSetList.size() == 1 && $context.info.selectionSetList[0] == "id")
   #foreach ($id in $context.source.inReplyToUser)
     #set ($user = { "id": "$id" })
 
@@ -14,7 +14,6 @@
     #end
     $util.qr($users.add($user))
   #end
-
   #return($users)
 #else
   #foreach ($id in $context.source.inReplyToUser)

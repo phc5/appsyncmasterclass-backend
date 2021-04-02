@@ -82,6 +82,42 @@ const retweetFragment = `
       ... on Tweet {
         ... tweetFields
       }
+
+      ... on Reply {
+        ... replyFields
+      }
+    }
+  }
+`;
+
+const replyFragment = `
+  fragment replyFields on Reply {
+    id
+    profile {
+      ... iProfileFields
+    }
+    createdAt
+    text
+    repliesCount
+    likesCount
+    retweetsCount
+    liked
+    retweeted
+    inReplyToTweet {
+      id
+      profile {
+        ... iProfileFields
+      }
+      createdAt
+      ... on Tweet {
+        repliesCount
+      }
+      ... on Reply {
+        repliesCount
+      }
+    }
+    inReplyToUser {
+      ... iProfileFields
     }
   }
 `;
@@ -95,6 +131,10 @@ const iTweetFragment = `
     ... on Retweet {
       ... retweetFields
     }
+
+    ... on Reply {
+      ... replyFields
+    }
   }
 `;
 
@@ -103,6 +143,7 @@ registerFragment('otherProfileFields', otherProfileFragment);
 registerFragment('iProfileFields', iProfileFragment);
 registerFragment('tweetFields', tweetFragment);
 registerFragment('retweetFields', retweetFragment);
+registerFragment('replyFields', replyFragment);
 registerFragment('iTweetFields', iTweetFragment);
 
 const a_user_calls_editMyProfile = async (user, input) => {
@@ -291,10 +332,35 @@ const a_user_calls_like = async (user, tweetId) => {
   return response;
 };
 
+const a_user_calls_reply = async (user, tweetId, text) => {
+  const reply = `
+    mutation reply($tweetId: ID!, $text: String!) {
+      reply(tweetId: $tweetId, text: $text) {
+        ... replyFields
+      }
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    reply,
+    { tweetId, text },
+    user.accessToken
+  );
+
+  const response = data.reply;
+
+  console.log(`[${user.username}] - has replied to tweet [${tweetId}]`);
+
+  return response;
+};
+
 const a_user_calls_retweet = async (user, tweetId) => {
   const retweet = `
     mutation retweet($tweetId: ID!) {
-      retweet(tweetId: $tweetId)
+      retweet(tweetId: $tweetId) {
+        ... retweetFields
+      }
     }
   `;
 
@@ -531,6 +597,7 @@ module.exports = {
   a_user_calls_getMyTimeline,
   a_user_calls_getTweets,
   a_user_calls_like,
+  a_user_calls_reply,
   a_user_calls_retweet,
   a_user_calls_unlike,
   a_user_calls_unretweet,

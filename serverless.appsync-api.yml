@@ -110,7 +110,7 @@ mappingTemplates:
     dataSource: tweetsTable
   - type: Reply
     field: inReplyToUser
-    dataSource: tweetsTable
+    dataSource: usersTable
   - type: Reply
     field: retweeted
     dataSource: retweetsTable

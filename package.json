@@ -9,7 +9,7 @@
     "export-env": "sls export-env && sls manifest",
     "package": "sls package",
     "sls": "sls",
-    "test:reply": "jest --verbose ./__tests__/test_cases/integration/reply.test.js",
+    "test:reply": "jest --verbose ./__tests__/test_cases/e2e/reply.test.js",
     "test:all": "jest --verbose ./__tests__/test_cases",
     "test:e2e": "jest --verbose ./__tests__/test_cases/e2e",
     "test:integration": "jest --verbose ./__tests__/test_cases/integration",

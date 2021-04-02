@@ -12,13 +12,14 @@ module.exports.handler = async (event) => {
   const { username } = event.identity;
   const id = ulid.ulid();
   const timestamp = new Date().toJSON();
+  console.log(tweetId, username, text);
 
   const tweet = await getTweetById(tweetId);
 
   if (!tweet) {
     throw new Error('Tweet is not found');
   }
-
+  console.log(tweet);
   const inReplyToUser = await getUserIdsToReplyTo(tweet);
 
   const newTweet = {
