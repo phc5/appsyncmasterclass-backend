@@ -34,6 +34,11 @@ mappingTemplates:
     dataSource: likesTable
     request: Query.getLikes.request.vtl
     response: Query.getLikes.response.vtl
+  - type: Query
+    field: getProfile
+    dataSource: usersTable
+    request: Query.getProfile.request.vtl
+    response: Query.getProfile.response.vtl
 
   - type: Mutation
     field: editMyProfile
@@ -124,6 +129,16 @@ mappingTemplates:
     dataSource: likesTable
     request: Tweet.liked.request.vtl
     response: Tweet.liked.response.vtl
+  - type: OtherProfile
+    field: following
+    dataSource: relationshipsTable
+    request: OtherProfile.following.request.vtl
+    respones: OtherProfile.following.response.vtl
+  - type: OtherProfile
+    field: followedBy
+    dataSource: relationshipsTable
+    request: OtherProfile.followedBy.request.vtl
+    respones: OtherProfile.followedBy.response.vtl
 
 dataSources:
   - type: NONE

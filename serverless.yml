@@ -150,6 +150,15 @@ resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: username
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: byUsername
+          KeySchema:
+            - AttributeName: username
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       Tags:
         - Key: Environment
           Value: ${self:custom.stage}

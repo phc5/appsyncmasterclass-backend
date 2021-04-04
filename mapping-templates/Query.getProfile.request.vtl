@@ -1,0 +1,15 @@
+{
+  "version" : "2018-05-29",
+  "operation" : "Query",
+  "query" : {
+    "expression" : "username = :username",
+    "expressionValues" : {
+      ":username" : $util.dynamodb.toDynamoDBJson($context.arguments.username)
+    }
+  },
+  "index": "byUsername",
+  "limit" : 1,
+  "scanIndexForward" : false,
+  "consistentRead" : false,
+  "select" : "ALL_ATTRIBUTES"
+}

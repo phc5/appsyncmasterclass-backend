@@ -10,7 +10,7 @@ type Query {
 
   getMyProfile: MyProfile!
 
-  getProfile(username: String!): OtherProfile!
+  getProfile(username: String!): OtherProfile
 
   getTweets(userId: ID!, limit: Int!, nextToken: String): TweetsPage!
 
