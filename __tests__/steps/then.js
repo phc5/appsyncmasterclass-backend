@@ -129,6 +129,25 @@ const there_are_N_tweets_in_TimelinesTable = async (userId, n) => {
   return response.Items;
 };
 
+const tweet_does_not_exist_in_TimelinesTable = async (userId, tweetId) => {
+  const DynamoDB = new AWS.DynamoDB.DocumentClient();
+
+  console.log(
+    `looking for tweet [${tweetId}] for user [${userId}] in table [${process.env.TIMELINES_TABLE}]`
+  );
+  const resp = await DynamoDB.get({
+    TableName: process.env.TIMELINES_TABLE,
+    Key: {
+      userId,
+      tweetId,
+    },
+  }).promise();
+
+  expect(resp.Item).not.toBeTruthy();
+
+  return resp.Item;
+};
+
 const tweet_exists_in_TimelinesTable = async (userId, tweetId) => {
   const DynamoDB = new AWS.DynamoDB.DocumentClient();
   const { TIMELINES_TABLE } = process.env;
@@ -226,6 +245,7 @@ module.exports = {
   retweet_exists_in_RetweetsTable,
   retweet_exists_in_TweetsTable,
   there_are_N_tweets_in_TimelinesTable,
+  tweet_does_not_exist_in_TimelinesTable,
   tweet_exists_in_TimelinesTable,
   tweet_exists_in_TweetsTable,
   tweetsCount_is_updated_in_UsersTable,

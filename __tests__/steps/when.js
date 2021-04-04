@@ -564,6 +564,13 @@ const we_invoke_confirmUserSignUp = async (username, name, email) => {
   await handler(event, context);
 };
 
+const we_invoke_distributeTweets = async (event) => {
+  const handler = require('../../functions/distribute-tweets').handler;
+
+  const context = {};
+  return await handler(event, context);
+};
+
 const we_invoke_getImageUploadUrl = async (
   username,
   extension,
@@ -658,6 +665,7 @@ module.exports = {
   a_user_signs_up,
   we_invoke_an_appsync_template,
   we_invoke_confirmUserSignUp,
+  we_invoke_distributeTweets,
   we_invoke_getImageUploadUrl,
   we_invoke_reply,
   we_invoke_retweet,
