@@ -37,8 +37,6 @@ mappingTemplates:
   - type: Query
     field: getProfile
     dataSource: usersTable
-    request: Query.getProfile.request.vtl
-    response: Query.getProfile.response.vtl
 
   - type: Mutation
     field: editMyProfile
@@ -98,8 +96,8 @@ mappingTemplates:
   - type: OtherProfile
     field: tweets
     dataSource: tweetsTable
-    request: MyProfile.tweets.response.vtl
-    response: MyProfile.tweets.request.vtl
+    request: MyProfile.tweets.request.vtl
+    response: MyProfile.tweets.response.vtl
   - type: Retweet
     field: profile
     dataSource: usersTable
@@ -132,13 +130,9 @@ mappingTemplates:
   - type: OtherProfile
     field: following
     dataSource: relationshipsTable
-    request: OtherProfile.following.request.vtl
-    respones: OtherProfile.following.response.vtl
   - type: OtherProfile
     field: followedBy
     dataSource: relationshipsTable
-    request: OtherProfile.followedBy.request.vtl
-    respones: OtherProfile.followedBy.response.vtl
 
 dataSources:
   - type: NONE

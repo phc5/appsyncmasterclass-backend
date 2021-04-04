@@ -40,6 +40,8 @@ const otherProfileFragment = `
     followingCount
     tweetsCount
     likesCount
+    following
+    followedBy
   }
 `;
 
@@ -150,7 +152,7 @@ const a_user_calls_editMyProfile = async (user, input) => {
   const editMyProfile = `
     mutation editMyProfile($input: ProfileInput!) {
       editMyProfile(newProfile: $input) {
-        ...myProfileFields
+        ... myProfileFields
 
         tweets {
           nextToken
@@ -174,6 +176,26 @@ const a_user_calls_editMyProfile = async (user, input) => {
   console.log(`[${user.username}] - edited profile`);
 
   return profile;
+};
+
+const a_user_calls_follow = async (user, userId) => {
+  const follow = `
+    mutation follow($userId: ID!) {
+      follow(userId: $userId)
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    follow,
+    { userId },
+    user.accessToken
+  );
+  const result = data.follow;
+
+  console.log(`[${user.username}] - followed [${userId}]`);
+
+  return result;
 };
 
 const a_user_calls_getImageUploadUrl = async (user, extension, contentType) => {
@@ -229,7 +251,7 @@ const a_user_calls_getMyProfile = async (user) => {
   const getMyProfile = `
     query MyQuery {
       getMyProfile {
-        ...myProfileFields
+        ... myProfileFields
 
         tweets {
           nextToken
@@ -309,6 +331,35 @@ const a_user_calls_getTweets = async (user, userId, limit, nextToken) => {
   );
 
   return tweets;
+};
+
+const a_user_calls_getProfile = async (user, username) => {
+  const getProfile = `
+    query getProfile($username: String!) {
+      getProfile(username: $username) {
+        ... otherProfileFields
+        tweets {
+          nextToken
+          tweets {
+            ... iTweetFields
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getProfile,
+    { username },
+    user.accessToken
+  );
+
+  const profile = data.getProfile;
+
+  console.log(`[${user.username}] - fetched profile for [${username}]`);
+
+  return profile;
 };
 
 const a_user_calls_like = async (user, tweetId) => {
@@ -591,10 +642,12 @@ const we_invoke_unretweet = async (username, tweetId) => {
 
 module.exports = {
   a_user_calls_editMyProfile,
+  a_user_calls_follow,
   a_user_calls_getImageUploadUrl,
   a_user_calls_getLikes,
   a_user_calls_getMyProfile,
   a_user_calls_getMyTimeline,
+  a_user_calls_getProfile,
   a_user_calls_getTweets,
   a_user_calls_like,
   a_user_calls_reply,
