@@ -406,6 +406,24 @@ const a_user_calls_reply = async (user, tweetId, text) => {
   return response;
 };
 
+const a_user_calls_unfollow = async (user, userId) => {
+  const unfollow = `mutation unfollow($userId: ID!) {
+    unfollow(userId: $userId)
+  }`;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    unfollow,
+    { userId },
+    user.accessToken
+  );
+  const result = data.unfollow;
+
+  console.log(`[${user.username}] - unfollowed [${userId}]`);
+
+  return result;
+};
+
 const a_user_calls_retweet = async (user, tweetId) => {
   const retweet = `
     mutation retweet($tweetId: ID!) {
@@ -667,6 +685,7 @@ module.exports = {
   a_user_calls_like,
   a_user_calls_reply,
   a_user_calls_retweet,
+  a_user_calls_unfollow,
   a_user_calls_unlike,
   a_user_calls_unretweet,
   a_user_calls_tweet,

@@ -38,7 +38,7 @@ type Mutation {
 
   follow(userId: ID!): Boolean!
 
-  unfollow(userID: ID!): Boolean!
+  unfollow(userId: ID!): Boolean!
 }
 
 interface IProfile {
