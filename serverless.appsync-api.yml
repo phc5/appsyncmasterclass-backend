@@ -38,6 +38,16 @@ mappingTemplates:
     field: getProfile
     dataSource: usersTable
 
+    # https://docs.aws.amazon.com/appsync/latest/devguide/pipeline-resolvers.html
+  - type: Query
+    field: getFollowers
+    kind: PIPELINE
+    functions:
+      - getFollowers
+      - hydrateFollowers
+    request: simplePipeline.request.vtl
+    response: simplePipeline.response.vtl
+
   - type: Mutation
     field: editMyProfile
     dataSource: usersTable
@@ -136,6 +146,12 @@ mappingTemplates:
   - type: OtherProfile
     field: followedBy
     dataSource: relationshipsTable
+
+functionConfigurations:
+  - name: getFollowers
+    dataSource: relationshipsTable
+  - name: hydrateFollowers
+    dataSource: usersTable
 
 dataSources:
   - type: NONE

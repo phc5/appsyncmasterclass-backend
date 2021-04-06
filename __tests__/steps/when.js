@@ -198,6 +198,28 @@ const a_user_calls_follow = async (user, userId) => {
   return result;
 };
 
+const a_user_calls_getFollowers = async (user, userId, limit, nextToken) => {
+  const getFollowers = `query getFollowers($userId: ID!, $limit: Int!, $nextToken: String) {
+    getFollowers(userId: $userId, limit: $limit, nextToken: $nextToken) {
+      profiles {
+        ... iProfileFields
+      }
+    }
+  }`;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getFollowers,
+    { userId, limit, nextToken },
+    user.accessToken
+  );
+  const result = data.getFollowers;
+
+  console.log(`[${user.username}] - fetched followers`);
+
+  return result;
+};
+
 const a_user_calls_getImageUploadUrl = async (user, extension, contentType) => {
   const getImageUploadUrl = `
     query getImageUploadUrl($extension: String, $contentType: String) {
@@ -676,6 +698,7 @@ const we_invoke_unretweet = async (username, tweetId) => {
 module.exports = {
   a_user_calls_editMyProfile,
   a_user_calls_follow,
+  a_user_calls_getFollowers,
   a_user_calls_getImageUploadUrl,
   a_user_calls_getLikes,
   a_user_calls_getMyProfile,
