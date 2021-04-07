@@ -220,6 +220,28 @@ const a_user_calls_getFollowers = async (user, userId, limit, nextToken) => {
   return result;
 };
 
+const a_user_calls_getFollowing = async (user, userId, limit, nextToken) => {
+  const getFollowing = `query getFollowing($userId: ID!, $limit: Int!, $nextToken: String) {
+    getFollowing(userId: $userId, limit: $limit, nextToken: $nextToken) {
+      profiles {
+        ... iProfileFields
+      }
+    }
+  }`;
+
+  const data = await GraphQL(
+    process.env.API_URL,
+    getFollowing,
+    { userId, limit, nextToken },
+    user.accessToken
+  );
+  const result = data.getFollowing;
+
+  console.log(`[${user.username}] - fetched following`);
+
+  return result;
+};
+
 const a_user_calls_getImageUploadUrl = async (user, extension, contentType) => {
   const getImageUploadUrl = `
     query getImageUploadUrl($extension: String, $contentType: String) {
@@ -699,6 +721,7 @@ module.exports = {
   a_user_calls_editMyProfile,
   a_user_calls_follow,
   a_user_calls_getFollowers,
+  a_user_calls_getFollowing,
   a_user_calls_getImageUploadUrl,
   a_user_calls_getLikes,
   a_user_calls_getMyProfile,

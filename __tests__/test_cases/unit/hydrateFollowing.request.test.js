@@ -3,11 +3,11 @@ const when = require('../../steps/when');
 const chance = require('chance').Chance();
 const path = require('path');
 
-describe('hydrateFollowers.request template', () => {
+describe('hydrateFollowing.request template', () => {
   it('Should return empty array if prev.result.relationships is empty', () => {
     const templatePath = path.resolve(
       __dirname,
-      '../../../mapping-templates/hydrateFollowers.request.vtl'
+      '../../../mapping-templates/hydrateFollowing.request.vtl'
     );
 
     const username = chance.guid();
@@ -34,7 +34,7 @@ describe('hydrateFollowers.request template', () => {
   it('Should convert relationships to BatchGetItem keys', () => {
     const templatePath = path.resolve(
       __dirname,
-      '../../../mapping-templates/hydrateFollowers.request.vtl'
+      '../../../mapping-templates/hydrateFollowing.request.vtl'
     );
 
     const username = chance.guid();
@@ -70,7 +70,7 @@ describe('hydrateFollowers.request template', () => {
           keys: [
             {
               id: {
-                S: userId,
+                S: otherUserId,
               },
             },
           ],

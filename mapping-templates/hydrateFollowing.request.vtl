@@ -2,13 +2,12 @@
   #return({ "profiles": [] })
 #end
 
-#set($users = [])
-#foreach($relationship in $context.prev.result.relationships)
-  #set($user = {})
-  #set($user.id = $relationship.userId)
+#set ($users = [])
+#foreach ($relationship in $context.prev.result.relationships)
+  #set ($user = {})
+  #set ($user.id = $relationship.otherUserId)
   $util.qr($users.add($util.dynamodb.toMapValues($user)))
 #end
-
 
 {
   "version" : "2018-05-29",
