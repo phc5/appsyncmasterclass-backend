@@ -6,8 +6,11 @@
   "main": "index.js",
   "scripts": {
     "deploy": "npm run sls -- deploy",
+    "deploy:staging": "npm run sls --deploy -s staging",
     "export-env": "sls export-env && sls manifest",
+    "export-env:staging": "sls export-env -s staging && sls manifest -s staging",
     "package": "sls package",
+    "package:staging": "sls package -s staging",
     "sls": "sls",
     "test:reply": "jest --verbose ./__tests__/test_cases/e2e/following.test.js",
     "test:all": "jest --verbose ./__tests__/test_cases",
