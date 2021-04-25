@@ -45,6 +45,9 @@
     "serverless-manifest-plugin": "^1.0.6"
   },
   "dependencies": {
+    "@middy/core": "^1.5.2",
+    "@middy/ssm": "^1.5.2",
+    "algoliasearch": "^4.9.0",
     "chance": "^1.1.7",
     "lodash": "^4.17.20",
     "ulid": "^2.3.0"
