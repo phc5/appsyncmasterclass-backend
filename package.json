@@ -9,6 +9,7 @@
     "deploy:staging": "npm run sls --deploy -s staging",
     "export-env": "sls export-env && sls manifest",
     "export-env:staging": "sls export-env -s staging && sls manifest -s staging",
+    "jest": "jest",
     "package": "sls package",
     "package:staging": "sls package -s staging",
     "sls": "sls",

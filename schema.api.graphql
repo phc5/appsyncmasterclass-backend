@@ -20,7 +20,12 @@ type Query {
 
   getFollowing(userId: ID!, limit: Int!, nextToken: String): ProfilesPage!
 
-  search(query: String!, mode: SearchMode!, limit: Int!, nextToken: String): SearchResultsPage!
+  search(
+    query: String!
+    mode: SearchMode!
+    limit: Int!
+    nextToken: String
+  ): SearchResultsPage!
 }
 
 type Mutation {
@@ -110,7 +115,7 @@ type OtherProfile implements IProfile {
 interface ITweet {
   id: ID!
   profile: IProfile!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
 }
 
 type TweetsPage {
@@ -126,7 +131,7 @@ type UnhydratedTweetsPage {
 type Tweet implements ITweet {
   id: ID!
   profile: IProfile!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   text: String!
   repliesCount: Int!
   likesCount: Int!
@@ -138,7 +143,7 @@ type Tweet implements ITweet {
 type Reply implements ITweet {
   id: ID!
   profile: IProfile!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   text: String!
   repliesCount: Int!
   likesCount: Int!
@@ -152,7 +157,7 @@ type Reply implements ITweet {
 type Retweet implements ITweet {
   id: ID!
   profile: IProfile!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   retweetOf: ITweet!
 }
 
