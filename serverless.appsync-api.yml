@@ -60,6 +60,11 @@ mappingTemplates:
     dataSource: searchFunction
     request: false
     response: false
+  - type: Query
+    field: getHashTag
+    dataSource: getHashTagFunction
+    request: false
+    response: false
 
   - type: Mutation
     field: editMyProfile
@@ -269,6 +274,10 @@ dataSources:
     name: searchFunction
     config:
       functionName: search
+  - type: AWS_LAMBDA
+    name: getHashTagFunction
+    config:
+      functionName: getHashTag
 
 substitutions:
   TweetsTable: !Ref TweetsTable
