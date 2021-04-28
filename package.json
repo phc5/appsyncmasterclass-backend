@@ -7,13 +7,12 @@
   "scripts": {
     "deploy": "npm run sls -- deploy",
     "deploy:staging": "npm run sls --deploy -s staging",
-    "export-env": "sls export-env && sls manifest",
+    "export-env": "sls export-env",
     "export-env:staging": "sls export-env -s staging && sls manifest -s staging",
     "jest": "jest",
     "package": "sls package",
     "package:staging": "sls package -s staging",
     "sls": "sls",
-    "test:reply": "jest --verbose ./__tests__/test_cases/e2e/following.test.js",
     "test:all": "jest --verbose ./__tests__/test_cases",
     "test:e2e": "jest --verbose ./__tests__/test_cases/e2e",
     "test:integration": "jest --verbose ./__tests__/test_cases/integration",
@@ -43,7 +42,8 @@
     "serverless-appsync-plugin": "^1.4.0",
     "serverless-export-env": "^1.4.0",
     "serverless-iam-roles-per-function": "^2.0.2",
-    "serverless-manifest-plugin": "^1.0.6"
+    "serverless-manifest-plugin": "^1.0.6",
+    "ws": "^7.4.4"
   },
   "dependencies": {
     "@middy/core": "1.5.2",
