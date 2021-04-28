@@ -1,9 +1,11 @@
+const _ = require('lodash');
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const graphql = require('graphql-tag');
 const ulid = require('ulid');
 const { TweetTypes } = require('../lib/constants');
 const { mutate } = require('../lib/graphql');
-const { getTweetById } = require('../lib/tweets');
+const { getTweetById, extractMentions } = require('../lib/tweets');
+const { getUserByUsername } = require('../lib/users');
 
 module.exports.handler = async (event) => {
   for (const record of event.Records) {
@@ -14,6 +16,13 @@ module.exports.handler = async (event) => {
         case TweetTypes.RETWEET:
           await notifyRetweet(tweet);
           break;
+      }
+
+      if (tweet.text) {
+        const mentions = extractMentions(tweet.text);
+        if (!_.isEmpty(mentions)) {
+          await notifyMentioned(mentions, tweet);
+        }
       }
     }
   }
@@ -58,4 +67,50 @@ async function notifyRetweet(tweet) {
       retweetedBy: tweet.creator,
     }
   );
+}
+
+async function notifyMentioned(usernames, tweet) {
+  const promises = usernames.map(async (username) => {
+    const user = await getUserByUsername(username.replace('@', ''));
+    if (!user) {
+      return;
+    }
+    console.log(tweet);
+
+    await mutate(
+      graphql`
+        mutation notifyMentioned(
+          $id: ID!
+          $userId: ID!
+          $mentionedBy: ID!
+          $mentionedByTweetId: ID!
+        ) {
+          notifyMentioned(
+            id: $id
+            userId: $userId
+            mentionedBy: $mentionedBy
+            mentionedByTweetId: $mentionedByTweetId
+          ) {
+            __typename
+            ... on Mentioned {
+              id
+              type
+              userId
+              mentionedBy
+              mentionedByTweetId
+              createdAt
+            }
+          }
+        }
+      `,
+      {
+        id: ulid.ulid(),
+        userId: user.id,
+        mentionedBy: tweet.creator,
+        mentionedByTweetId: tweet.id,
+      }
+    );
+  });
+
+  await Promise.all(promises);
 }
